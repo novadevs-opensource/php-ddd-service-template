@@ -2,7 +2,7 @@
 
 ### Setup
 
-First of all, to run the project you just need to setup the `COMPOSE_PROJECT_NAME env in this two places:
+First of all, to run the project you just need to setup the `COMPOSE_PROJECT_NAME` env in this two places:
  - docker/.env.dist
  - Makefile
 
