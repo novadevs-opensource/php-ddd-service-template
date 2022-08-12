@@ -4,8 +4,6 @@
 .DEFAULT_GOAL := help
 COMPOSE_PROJECT_NAME = php-ddd-service-template
 DOCKER_COMPOSE = docker-compose -f ./docker/docker-compose.yml
-DOCKER_COMPOSE_PHP_FPM_EXEC = ${DOCKER_COMPOSE} exec -u www-data ${COMPOSE_PROJECT_NAME}_php-fpm
-DOCKER_COMPOSE_DB_EXEC = docker exec -it ${COMPOSE_PROJECT_NAME}_database
 
 # #################
 # Docker compose
@@ -41,10 +39,10 @@ help: ## Show this help.
 	@fgrep -h "##-" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##-//'
 
 sh: ##- Connect to the php-fpm container
-	${DOCKER_COMPOSE} exec -u www-data ${COMPOSE_PROJECT_NAME}_php-fpm bash
+	@docker exec -it -u www-data ${COMPOSE_PROJECT_NAME}_php-fpm bash
 
 db: ##- Connect to the database container
-	${DOCKER_COMPOSE_DB_EXEC} bash
+	@docker exec -it ${COMPOSE_PROJECT_NAME}_database bash
 
 .PHONY: tests
 tests: ##- Run the app tests
@@ -59,23 +57,23 @@ tests: ##- Run the app tests
 # #################
 
 db_migrate:  ##- Run migrations
-	${DOCKER_COMPOSE} exec -u www-data ${COMPOSE_PROJECT_NAME}_php-fpm bin/console doctrine:migrations:migrate --no-interaction
+	@${DOCKER_COMPOSE} exec -u www-data ${COMPOSE_PROJECT_NAME}_php-fpm bin/console doctrine:migrations:migrate --no-interaction
 db_diff: ##- Show migrations diff
-	${DOCKER_COMPOSE} exec -u www-data ${COMPOSE_PROJECT_NAME}_php-fpm bin/console doctrine:migrations:diff --no-interaction
+	@${DOCKER_COMPOSE} exec -u www-data ${COMPOSE_PROJECT_NAME}_php-fpm bin/console doctrine:migrations:diff --no-interaction
 
 # #################
 # Static code analysis
 # #################
 
 phpstan: ##- Run phpstan
-	${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/phpstan analyse src tests -c phpstan.neon
+	@${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/phpstan analyse src tests -c phpstan.neon
 
 deptrac: ##- Run php deptrac
-	${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/deptrac analyze deptrac-layers.yaml
-	${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/deptrac analyze deptrac-modules.yaml
+	@${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/deptrac analyze deptrac-layers.yaml
+	@${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/deptrac analyze deptrac-modules.yaml
 
 cs-fix: ##- Run php cs-fixer
-	${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/php-cs-fixer fix
+	@${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/php-cs-fixer fix
 
 cs-fix-diff: ##- Run php cs-fixer preview
-	${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/php-cs-fixer fix --dry-run --diff
+	@${DOCKER_COMPOSE_PHP_FPM_EXEC} vendor/bin/php-cs-fixer fix --dry-run --diff
