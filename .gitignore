@@ -29,3 +29,6 @@
 ###< docker ###
 /docker/.env
 
+###< visual code studio ###
+.vscode/
+
