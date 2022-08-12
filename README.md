@@ -2,12 +2,23 @@
 
 ### Setup
 
-First of all, to run the project you just need to setup the `COMPOSE_PROJECT_NAME` env in this two places:
- - docker/.env.dist
- - Makefile
+To start locally this project using Docker you need to do the following steps:
 
-You'll need to set up some stuff as the DB in the .env file of the Symfony project place in the repository root:
-- `mysql://<MYSQL_USER>:<MYSQL_PASSWORD>@127.0.0.1:3306/<MYSQL_DATABASE>?serverVersion=8.0&charset=utf8mb4"`
+1. Create the Docker configuration file `docker/.env` using the template `docker/.env.dist` and set there the values of the project like `COMPOSE_PROJECT_NAME`:
+
+    ```
+    cp -v docker/.env.dist docker/.env
+    ```
+
+    **NOTE:** If you change the default value of `COMPOSE_PROJECT_NAME` variable you will need to change it in the configuration file `Makefile` as well.
+
+2. Ensure that the content of the `DATABASE_URL` variable in the configuration file `.env.dist` located in the project root directory has the same database values as the configuration file `docker/.env.dist`.
+
+3. Start the project:
+
+    ```
+    make up
+    ```
 
 ### Dockerise Symfony Application
 
