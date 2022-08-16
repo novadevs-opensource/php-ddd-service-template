@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  php-fpm:
+    container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
+    image: ${DOCKER_REPOSITORY}:${DOCKER_REPOSITORY_TAG_PHP_FPM}
+    labels:
+      project_name: ${COMPOSE_PROJECT_NAME}
+      volumen_data: code
+    environment:
+      PHP_IDE_CONFIG: "serverName=Docker"
+    volumes:
+      - data_project:/var/www/
+
+  nginx:
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    image: ${DOCKER_REPOSITORY}:${DOCKER_REPOSITORY_TAG_NGINX}
+    labels:
+      project_name: ${COMPOSE_PROJECT_NAME}
+      volumen_data: code
+    ports:
+      - ${NGINX_HOST_HTTP_PORT}:80
+    volumes:
+      - data_project:/var/www/
+    depends_on:
+      - php-fpm
+
+ # postgres:
+ #   container_name: ${COMPOSE_PROJECT_NAME}_database
+ #   image: ${DOCKER_REPOSITORY}:${DOCKER_REPOSITORY_TAG_POSTGRES}
+ #   ports:
+ #     - ${POSTGRES_PORT}:5432
+ #   environment:
+ #     POSTGRES_DB: ${COMPOSE_PROJECT_NAME}_${POSTGRES_DB}
+ #     POSTGRES_USER: ${COMPOSE_PROJECT_NAME}_${POSTGRES_USER}
+ #     POSTGRES_PASSWORD: ${COMPOSE_PROJECT_NAME}_${POSTGRES_PASSWORD}
+ #   volumes:
+ #     - db_data:/var/lib/postgresql/data:rw
+
+  mysql:
+    container_name: ${COMPOSE_PROJECT_NAME}_database
+    image: ${DOCKER_REPOSITORY}:${DOCKER_REPOSITORY_TAG_MYSQL}
+    command: --default-authentication-plugin=mysql_native_password
+    labels:
+      project_name: ${COMPOSE_PROJECT_NAME}
+      volumen_data: db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}_${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - ${MYSQL_PORT}:3306
+    volumes:
+      - db_data:/var/lib/mysql:rw
+
+volumes:
+  data_project:
+  db_data:

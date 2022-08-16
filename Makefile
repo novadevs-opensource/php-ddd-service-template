@@ -3,7 +3,9 @@
 # #################
 .DEFAULT_GOAL := help
 COMPOSE_PROJECT_NAME = php-ddd-service-template
-DOCKER_COMPOSE = docker-compose -f ./docker/docker-compose.yml
+PROJ_ENV = local
+DOCKER_COMPOSE = docker-compose -f ./docker/${PROJ_ENV}/docker-compose.yml
+
 
 # #################
 # Docker compose
