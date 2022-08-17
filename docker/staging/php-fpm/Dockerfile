@@ -10,7 +10,7 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; \
       pecl install xdebug && docker-php-ext-enable xdebug; \
     fi;
 
-COPY ./docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+COPY docker/staging/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # Postgres, MySQL and other deps
 RUN apk add --no-cache libpq-dev && docker-php-ext-install pdo_pgsql
@@ -22,7 +22,6 @@ RUN apk add --no-cache zlib-dev g++ git icu-dev zip libzip-dev zip \
     && docker-php-ext-enable apcu \
     && docker-php-ext-configure zip \
     && docker-php-ext-install zip
-
 
 # Configure non-root user.
 ARG PUID=1000
